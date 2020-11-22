@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <q-form @submit="salvarContato" ref="formContato" class="q-gutter-md row items-start" >
+    <q-form @submit="salvarContato" @reset="limparForm" ref="formContato" class="q-gutter-md row items-start" >
       <q-input
         dense
         outlined
@@ -43,7 +43,8 @@
       />
 
       <div>
-        <q-btn label="Salvar" type="submit" color="primary" />
+        <q-btn :label="selecionado ? 'Atualizar' : 'Salvar'" type="submit" color="primary" />
+        <q-btn label="Limpar" type="reset" color="primary" flat class="q-ml-sm" />
       </div>
     </q-form>
 
@@ -60,7 +61,7 @@
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td key="actions" class="q-pa-md q-gutter-sm" style="width: 50px">
-            <q-btn size="sm" color="green" icon="edit" />
+            <q-btn size="sm" color="green" icon="edit" @click="selecionarContato(props.row)" />
             <q-btn size="sm" color="red" icon="delete" @click="alertaExclusao(props.row)" />
           </q-td>
           <q-td key="id" :props="props">
@@ -90,7 +91,7 @@ export default {
   name: 'Index',
   data () {
     return {
-      selected: [],
+      selecionado: null,
       form: {
         nome: '',
         sexo: 'Masculino',
@@ -113,9 +114,18 @@ export default {
   },
   methods: {
     salvarContato () {
-      this.$axios.post('/contato', this.form)
+      const options = {
+        url: this.selecionado ? `/contato/${this.selecionado}` : '/contato',
+        method: this.selecionado ? 'PUT' : 'POST',
+        data: this.form
+      }
+
+      this.$axios(options)
         .then(({ data }) => {
-          this.contatos.push(data)
+          if (!this.selecionado) {
+            this.contatos.push(data)
+          }
+
           this.limparForm()
           this.$refs.formContato.resetValidation()
 
@@ -133,6 +143,7 @@ export default {
         })
     },
     limparForm () {
+      this.selecionado = null
       this.form = {
         nome: '',
         sexo: 'Masculino',
@@ -181,6 +192,17 @@ export default {
             message: 'Ocorreu um erro ao excluir'
           })
         })
+    },
+    selecionarContato (contato) {
+      this.selecionado = contato.id
+      // this.form = {
+      //   nome: contato.nome,
+      //   sexo: contato.sexo,
+      //   telefone: contato.telefone,
+      //   email: contato.email
+      // }
+      // this.form = contato
+      this.form = Object.assign(this.form, contato)
     }
   }
 }

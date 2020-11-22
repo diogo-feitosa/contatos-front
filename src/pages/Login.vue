@@ -1,11 +1,11 @@
 <template>
   <q-page padding>
-    Index
+    <div>Login</div>
   </q-page>
 </template>
 
 <script>
 export default {
-  name: 'PageIndex'
+  name: 'Login'
 }
 </script>

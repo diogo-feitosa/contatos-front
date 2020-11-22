@@ -26,5 +26,20 @@ export default function (/* { store, ssrContext } */) {
     base: process.env.VUE_ROUTER_BASE
   })
 
+  Router.beforeEach((to, from, next) => {
+    const rotasPublicas = [
+      '/login'
+    ]
+
+    const auth = !rotasPublicas.includes(to.path)
+    const user = localStorage.getItem('user')
+
+    if (auth && !user) {
+      return next({ path: '/login' })
+    }
+
+    next()
+  })
+
   return Router
 }

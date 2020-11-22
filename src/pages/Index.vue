@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <q-form @submit="salvarContato" class="q-gutter-md row items-start" >
+    <q-form @submit="salvarContato" ref="formContato" class="q-gutter-md row items-start" >
       <q-input
         dense
         outlined
@@ -46,6 +46,16 @@
         <q-btn label="Salvar" type="submit" color="primary" />
       </div>
     </q-form>
+
+    <br>
+
+    <q-table
+      :data="contatos"
+      :columns="colunas"
+      row-key="id"
+      rows-per-page-label="Contatos por página"
+      :pagination="{rowsPerPage: 10}"
+    />
   </q-page>
 </template>
 
@@ -59,17 +69,60 @@ export default {
         sexo: 'Masculino',
         telefone: '',
         email: ''
-      }
+      },
+      contatos: [],
+      colunas: [
+        { name: 'id', label: 'ID', field: 'id', sortable: true, align: 'left' },
+        { name: 'nome', label: 'Nome', field: 'nome', sortable: true, align: 'left' },
+        { name: 'sexo', label: 'Sexo', field: 'sexo', sortable: true, align: 'left' },
+        { name: 'telefone', label: 'Telefone', field: 'telefone', sortable: true, align: 'left' },
+        { name: 'email', label: 'E-mail', field: 'email', sortable: true, align: 'left' }
+      ]
     }
+  },
+  mounted () {
+    this.listaContatos()
   },
   methods: {
     salvarContato () {
       this.$axios.post('/contato', this.form)
         .then(({ data }) => {
-          console.log(data)
+          this.contatos.push(data)
+          this.limparForm()
+          this.$refs.formContato.resetValidation()
+
+          this.$q.notify({
+            type: 'positive',
+            message: 'Salvo com sucesso'
+          })
         })
         .catch((err) => {
           console.log(err)
+          this.$q.notify({
+            type: 'negative',
+            message: 'Ocorreu um erro ao salvar'
+          })
+        })
+    },
+    limparForm () {
+      this.form = {
+        nome: '',
+        sexo: 'Masculino',
+        telefone: '',
+        email: ''
+      }
+    },
+    listaContatos () {
+      this.$axios.get('/contatos')
+        .then(({ data }) => {
+          this.contatos = data
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$q.notify({
+            type: 'negative',
+            message: 'Ocorreu um erro ao listar os contatos'
+          })
         })
     }
   }

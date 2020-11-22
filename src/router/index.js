@@ -1,10 +1,20 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import { LocalStorage } from 'quasar'
+import axios from 'axios'
 
 import routes from './routes'
 
 Vue.use(VueRouter)
+
+let token = LocalStorage.has('token')
+
+if (token) {
+  token = LocalStorage.getItem('token')
+  axios.defaults.headers.common.Authorization = `Basic ${token}`
+}
+
+// console.log(axios.defaults)
 
 /*
  * If not building with SSR mode, you can

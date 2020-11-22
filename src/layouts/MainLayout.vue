@@ -26,8 +26,13 @@
 <script>
 export default {
   name: 'MainLayout',
-  data () {
-    return {}
+  mounted () {
+    let token = this.$q.localStorage.has('token')
+
+    if (token) {
+      token = this.$q.localStorage.getItem('token')
+      this.$axios.defaults.headers.common.Authorization = `Basic ${token}`
+    }
   },
   methods: {
     logout () {

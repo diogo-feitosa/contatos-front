@@ -45,8 +45,9 @@ export default {
         headers: { Authorization: `Basic ${hash}` }
       }
 
-      this.$axios('http://192.168.0.9:8080/api/login', options)
+      this.$axios('/login', options)
         .then(({ data }) => {
+          this.$axios.defaults.headers.common.Authorization = `Basic ${hash}`
           this.$q.localStorage.set('token', hash)
           this.$router.push('/')
         })

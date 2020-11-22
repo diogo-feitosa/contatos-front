@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import { LocalStorage } from 'quasar'
 
 import routes from './routes'
 
@@ -32,10 +33,14 @@ export default function (/* { store, ssrContext } */) {
     ]
 
     const auth = !rotasPublicas.includes(to.path)
-    const user = localStorage.getItem('user')
+    const token = LocalStorage.getItem('token')
 
-    if (auth && !user) {
+    if (auth && !token) {
       return next({ path: '/login' })
+    }
+
+    if (token && to.path === '/login') {
+      return next({ path: '/' })
     }
 
     next()

@@ -12,6 +12,8 @@
         <q-toolbar-title>
           Contatos
         </q-toolbar-title>
+
+        <q-btn v-if="$q.localStorage.has('token')" flat icon="exit_to_app" label="Sair" @click="logout" />
       </q-toolbar>
     </q-header>
 
@@ -26,6 +28,12 @@ export default {
   name: 'MainLayout',
   data () {
     return {}
+  },
+  methods: {
+    logout () {
+      this.$q.localStorage.remove('token')
+      this.$router.push('/login')
+    }
   }
 }
 </script>

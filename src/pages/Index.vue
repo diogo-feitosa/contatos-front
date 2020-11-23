@@ -122,7 +122,9 @@ export default {
 
       this.$axios(options)
         .then(({ data }) => {
-          if (!this.selecionado) {
+          if (this.selecionado) {
+            this.contatos.splice(this.contatos.findIndex((contato) => contato.id === data.id), 1, data)
+          } else {
             this.contatos.push(data)
           }
 

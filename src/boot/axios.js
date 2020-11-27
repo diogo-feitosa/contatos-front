@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
 
-axios.defaults.baseURL = 'http://192.168.0.2:8080/api'
+axios.defaults.baseURL = 'https://apirest-contatos-diogo.herokuapp.com/api'
 
 Vue.prototype.$axios = axios
